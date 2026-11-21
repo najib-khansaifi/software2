@@ -1,0 +1,12 @@
+flowchart LR
+  U["Student<br/>(room, start, end)"] --> V["1. validateExplainRequest<br/>empty / malformed / too long -> reject"]
+  V --> R["2. Rule engine<br/>checkAvailability() (unchanged)<br/>SOURCE OF TRUTH"]
+  R -->|"isAvailable + reasonCode<br/>+ minimal facts"| A["3. LLM adapter<br/>mock (default) or server-side proxy<br/>keys never in browser"]
+  A -->|"{explanation}"| O["4. validateExplanation<br/>status, vocabulary, length, plain text"]
+  O -->|valid| UI["UI: labelled<br/>'Generated explanation,<br/>not a confirmed booking'"]
+  O -->|"invalid / timeout / error / no key"| F["Deterministic fallback<br/>= rule engine message"]
+  F --> UI
+  R -->|"status shown directly"| UI
+  classDef truth fill:#e5f7ef,stroke:#14684f,color:#14684f;
+  classDef llm fill:#f6f4ff,stroke:#a79ae6,color:#2c2760;
+  class R truth; class A llm;
